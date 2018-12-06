@@ -57,9 +57,12 @@
 
 #include <QtCore/QObject>
 
+#include <QtBluetooth/QBluetoothSocket>
+
 QT_FORWARD_DECLARE_CLASS(QBluetoothSocket)
 
 QT_USE_NAMESPACE
+
 
 //! [declaration]
 class BtClient : public QObject
@@ -79,13 +82,15 @@ public slots:
 
 signals:
     void messageReceived(const QString &sender, const QString &message);
-    void connected(const QString &name);
+    void devConnected(const QString &name);
     void failConnected();
     void disconnected();
 
 private slots:
     void readSocket();
-    void connected();
+    void connectedSocket();
+    void errorSocket(QBluetoothSocket::SocketError error);
+    void stateSocket(QBluetoothSocket::SocketState state);
 
 private:
     QBluetoothSocket *socket;

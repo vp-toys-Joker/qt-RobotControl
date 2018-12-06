@@ -84,8 +84,12 @@ void BtClient::startClient(const QBluetoothServiceInfo &remoteService)
             return;
         }
         connect(socket, SIGNAL(readyRead()), this, SLOT(readSocket()));
-        connect(socket, SIGNAL(connected()), this, SLOT(connected()));
+        //connect(socket, SIGNAL(connected()), this, SLOT(connectedSocket()));
+        connect(socket, &QBluetoothSocket::connected, this, &BtClient::connectedSocket);
         connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
+        //connect(socket, &QBluetoothSocket::error, this, &BtClient::errorSocket);
+        connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(errorSocket(QBluetoothSocket::SocketError)));
+        connect(socket, SIGNAL(stateChanged(QBluetoothSocket::SocketState)), this, SLOT(stateSocket(QBluetoothSocket::SocketState)));
     }
     qDebug() << "Create socket Ok!";
     socket->connectToService(remoteService);
@@ -198,8 +202,69 @@ void BtClient::sendMessage(const char &msg)
 //! [sendMessage]
 
 //! [connected]
-void BtClient::connected()
+void BtClient::connectedSocket()
 {
-    emit connected(socket->peerName());
+    emit devConnected(socket->peerName());
 }
 //! [connected]
+
+void BtClient::errorSocket(QBluetoothSocket::SocketError error)
+{
+    //QString serr;
+    switch(error)
+    {
+        case QBluetoothSocket::NoSocketError:
+        qDebug() << "NoSocketError";
+        break;
+        case QBluetoothSocket::UnknownSocketError:
+        qDebug() << "UnknownSocketError";
+        break;
+        case QBluetoothSocket::RemoteHostClosedError:
+        qDebug() << "RemoteHostClosedError";
+        break;
+        case QBluetoothSocket::HostNotFoundError:
+        qDebug() << "HostNotFoundError";
+        break;
+        case QBluetoothSocket::ServiceNotFoundError:
+        qDebug() << "ServiceNotFoundError";
+        break;
+        case QBluetoothSocket::NetworkError:
+        qDebug() << "NetworkError";
+        break;
+        case QBluetoothSocket::UnsupportedProtocolError:
+        qDebug() << "UnsupportedProtocolError";
+        break;
+        case QBluetoothSocket::OperationError:
+        qDebug() << "OperationError";
+        break;
+    }
+//    serr << error;
+}
+
+void BtClient::stateSocket(QBluetoothSocket::SocketState state)
+{
+    switch(state)
+    {
+        case QBluetoothSocket::UnconnectedState:
+        qDebug() << "UnconnectedState";
+        break;
+        case QBluetoothSocket::ServiceLookupState:
+        qDebug() << "ServiceLookupState";
+        break;
+        case QBluetoothSocket::ConnectingState:
+        qDebug() << "ConnectingState";
+        break;
+        case QBluetoothSocket::ConnectedState:
+        qDebug() << "ConnectedState";
+        break;
+        case QBluetoothSocket::BoundState:
+        qDebug() << "BoundState";
+        break;
+        case QBluetoothSocket::ClosingState:
+        qDebug() << "ClosingState";
+        break;
+        case QBluetoothSocket::ListeningState:
+        qDebug() << "ListeningState";
+        break;
+    }
+}
