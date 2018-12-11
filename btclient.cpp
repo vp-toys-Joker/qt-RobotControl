@@ -80,14 +80,14 @@ void BtClient::startClient(const QBluetoothServiceInfo &remoteService)
         if (socket == nullptr)
         {
             qDebug() << "Create socket error!";
-            emit failConnected();
+            emit disconnected(false);
             return;
         }
         connect(socket, SIGNAL(readyRead()), this, SLOT(readSocket()));
         //connect(socket, SIGNAL(connected()), this, SLOT(connectedSocket()));
         connect(socket, &QBluetoothSocket::connected, this, &BtClient::connectedSocket);
-        connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
-        //connect(socket, &QBluetoothSocket::error, this, &BtClient::errorSocket);
+        connect(socket, SIGNAL(disconnected()), this, SLOT(disConnected()));
+//        connect(socket, &QBluetoothSocket::error, this, &BtClient::errorSocket);
         connect(socket, SIGNAL(error(QBluetoothSocket::SocketError)), this, SLOT(errorSocket(QBluetoothSocket::SocketError)));
         connect(socket, SIGNAL(stateChanged(QBluetoothSocket::SocketState)), this, SLOT(stateSocket(QBluetoothSocket::SocketState)));
     }
@@ -103,10 +103,15 @@ void BtClient::stopClient()
 {
     if (socket != nullptr)
     {
+        if(socket->error() == QBluetoothSocket::NoSocketError
+        || socket->error() == QBluetoothSocket::OperationError)
+        {
+            sendMessage(cmdDisconnect);
+        }
         delete socket;
         socket = nullptr;
     }
-    emit disconnected();
+    emit disconnected(true);
 }
 //! [stopClient]
 
@@ -208,63 +213,51 @@ void BtClient::connectedSocket()
 }
 //! [connected]
 
+void BtClient::disConnected()
+{
+//    stopClient();
+    disconnected(true);
+}
+
 void BtClient::errorSocket(QBluetoothSocket::SocketError error)
 {
-    //QString serr;
-    switch(error)
+    QString serr = socket->errorString();
+    emit sendSocketState(serr);
+//    qDebug() << serr;
+    if(error != QBluetoothSocket::NoSocketError
+    && error != QBluetoothSocket::OperationError)
     {
-        case QBluetoothSocket::NoSocketError:
-        qDebug() << "NoSocketError";
-        break;
-        case QBluetoothSocket::UnknownSocketError:
-        qDebug() << "UnknownSocketError";
-        break;
-        case QBluetoothSocket::RemoteHostClosedError:
-        qDebug() << "RemoteHostClosedError";
-        break;
-        case QBluetoothSocket::HostNotFoundError:
-        qDebug() << "HostNotFoundError";
-        break;
-        case QBluetoothSocket::ServiceNotFoundError:
-        qDebug() << "ServiceNotFoundError";
-        break;
-        case QBluetoothSocket::NetworkError:
-        qDebug() << "NetworkError";
-        break;
-        case QBluetoothSocket::UnsupportedProtocolError:
-        qDebug() << "UnsupportedProtocolError";
-        break;
-        case QBluetoothSocket::OperationError:
-        qDebug() << "OperationError";
-        break;
+        stopClient();
     }
-//    serr << error;
 }
 
 void BtClient::stateSocket(QBluetoothSocket::SocketState state)
 {
+    QString sstate;
     switch(state)
     {
         case QBluetoothSocket::UnconnectedState:
-        qDebug() << "UnconnectedState";
+        sstate = "UnconnectedState";
         break;
         case QBluetoothSocket::ServiceLookupState:
-        qDebug() << "ServiceLookupState";
+        sstate = "ServiceLookupState";
         break;
         case QBluetoothSocket::ConnectingState:
-        qDebug() << "ConnectingState";
+        sstate = "ConnectingState";
         break;
         case QBluetoothSocket::ConnectedState:
-        qDebug() << "ConnectedState";
+        sstate = "ConnectedState";
         break;
         case QBluetoothSocket::BoundState:
-        qDebug() << "BoundState";
+        sstate = "BoundState";
         break;
         case QBluetoothSocket::ClosingState:
-        qDebug() << "ClosingState";
+        sstate = "ClosingState";
         break;
         case QBluetoothSocket::ListeningState:
-        qDebug() << "ListeningState";
+        sstate = "ListeningState";
         break;
     }
+//    qDebug() << sstate;
+    emit sendSocketState(sstate);
 }

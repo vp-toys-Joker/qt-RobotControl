@@ -56,7 +56,8 @@ public slots:
     void sendBackwardLeftReleasedButtonMessage();
     void clientReady(const QString peerName);
     void clientFail();
-    void disconnect();
+    void disconnect(bool state);
+    void logWrite(QString text);
 private slots:
     void startScan();
     void scanFinished();

@@ -1,5 +1,6 @@
 #include "declaration.h"
 
+#include <QMessageBox>
 #include <QKeyEvent>
 #include "RobotControl.h"
 
@@ -140,8 +141,10 @@ void RobotControlDlg::itemActivated(QListWidgetItem *item)
         connect(discoverySeviceAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
                 client, SLOT(beginClient(QBluetoothServiceInfo)));
         connect(client, SIGNAL(devConnected(QString)), this, SLOT(clientReady(QString)));
-        connect(client, SIGNAL(failConnected()), this, SLOT(clientFail()));
-        connect(client, SIGNAL(disconnected()), this, SLOT(disconnect()));
+//        connect(client, SIGNAL(failConnected()), this, SLOT(clientFail()));
+        connect(client, SIGNAL(disconnected(bool)), this, SLOT(disconnect(bool)));
+//        connect(client, SIGNAL(sendSocketError(QString)), this, SLOT(logWrite(QString)));
+        connect(client, SIGNAL(sendSocketState(QString)), this, SLOT(logWrite(QString)));
 
         discoverySeviceAgent->start();
     }
@@ -159,85 +162,100 @@ void RobotControlDlg::clientReady(const QString peerName)
         title = QString("%1 соединен с %2").arg(Title).arg(peerName.mid(1,peerName.size()-2));
     }
     setWindowTitle(title);
-    connect(this,SIGNAL(sendMessage(char)),client,SLOT(sendMessage(char)));
-    connect(ui->forwardButton, SIGNAL(pressed()), this,  SLOT(sendForwardPressButtonMessage()));
-    connect(ui->backwardButton, SIGNAL(pressed()), this, SLOT(sendBackwardPressButtonMessage()));
-    connect(ui->leftButton, SIGNAL(pressed()), this,     SLOT(sendLeftPressButtonMessage()));
-    connect(ui->rightButton, SIGNAL(pressed()), this,    SLOT(sendRightPressButtonMessage()));
-    connect(ui->forwardButton, SIGNAL(released()), this, SLOT(sendForwardReleasedButtonMessage()));
-    connect(ui->backwardButton,SIGNAL(released()), this, SLOT(sendBackwardReleasedButtonMessage()));
-    connect(ui->leftButton,  SIGNAL(released()), this,   SLOT(sendLeftReleasedButtonMessage()));
-    connect(ui->rightButton, SIGNAL(released()), this,   SLOT(sendRightReleasedButtonMessage()));
-    connect(ui->forwardrightButton,  SIGNAL(pressed()),  this, SLOT(sendForwardRightPressButtonMessage()));
-    connect(ui->forwardrightButton,  SIGNAL(released()), this, SLOT(sendForwardRightReleasedButtonMessage()));
-    connect(ui->forwardleftButton,   SIGNAL(pressed()),  this, SLOT(sendForwardLeftPressButtonMessage()));
-    connect(ui->forwardleftButton,   SIGNAL(released()), this, SLOT(sendForwardLeftReleasedButtonMessage()));
-    connect(ui->backwardrightButton, SIGNAL(pressed()),  this, SLOT(sendBackwardRightPressButtonMessage()));
-    connect(ui->backwardrightButton, SIGNAL(released()), this, SLOT(sendBackwardRightReleasedButtonMessage()));
-    connect(ui->backwardleftButton,  SIGNAL(pressed()),  this, SLOT(sendBackwardLeftPressButtonMessage()));
-    connect(ui->backwardleftButton,  SIGNAL(released()), this, SLOT(sendBackwardLeftReleasedButtonMessage()));
-//    connect(this,&RobotControlDlg::sendMessage,client,&BtClient::sendMessage);
-//    connect(ui->forwardButton, &QPushButton::pressed, this,  &RobotControlDlg::sendForwardPressButtonMessage);
-//    connect(ui->backwardButton, &QPushButton::pressed, this, &RobotControlDlg::sendBackwardPressButtonMessage);
-//    connect(ui->leftButton, &QPushButton::pressed, this,     &RobotControlDlg::sendLeftPressButtonMessage);
-//    connect(ui->rightButton, &QPushButton::pressed, this,    &RobotControlDlg::sendRightPressButtonMessage);
-//    connect(ui->forwardButton, &QPushButton::released, this,  &RobotControlDlg::sendForwardReleasedButtonMessage);
-//    connect(ui->backwardButton, &QPushButton::released, this, &RobotControlDlg::sendBackwardReleasedButtonMessage);
-//    connect(ui->leftButton, &QPushButton::released, this,     &RobotControlDlg::sendLeftReleasedButtonMessage);
-//    connect(ui->rightButton, &QPushButton::released, this,    &RobotControlDlg::sendRightReleasedButtonMessage);
-//    connect(ui->forwardrightButton, &QPushButton::pressed,   this, &RobotControlDlg::sendForwardRightPressButtonMessage);
-//    connect(ui->forwardrightButton, &QPushButton::released,  this, &RobotControlDlg::sendForwardRightReleasedButtonMessage);
-//    connect(ui->forwardleftButton,   &QPushButton::pressed, this,  &RobotControlDlg::sendForwardLeftPressButtonMessage);
-//    connect(ui->forwardleftButton,   &QPushButton::released, this, &RobotControlDlg::sendForwardLeftReleasedButtonMessage);
-//    connect(ui->backwardrightButton, &QPushButton::pressed, this,  &RobotControlDlg::sendBackwardRightPressButtonMessage);
-//    connect(ui->backwardrightButton, &QPushButton::released ,this, &RobotControlDlg::sendBackwardRightReleasedButtonMessage);
-//    connect(ui->backwardleftButton,  &QPushButton::pressed, this,  &RobotControlDlg::sendBackwardLeftPressButtonMessage);
-//    connect(ui->backwardleftButton,  &QPushButton::released, this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
+//    connect(this,SIGNAL(sendMessage(char)),client,SLOT(sendMessage(char)));
+//    connect(ui->forwardButton, SIGNAL(pressed()), this,  SLOT(sendForwardPressButtonMessage()));
+//    connect(ui->backwardButton, SIGNAL(pressed()), this, SLOT(sendBackwardPressButtonMessage()));
+//    connect(ui->leftButton, SIGNAL(pressed()), this,     SLOT(sendLeftPressButtonMessage()));
+//    connect(ui->rightButton, SIGNAL(pressed()), this,    SLOT(sendRightPressButtonMessage()));
+//    connect(ui->forwardButton, SIGNAL(released()), this, SLOT(sendForwardReleasedButtonMessage()));
+//    connect(ui->backwardButton,SIGNAL(released()), this, SLOT(sendBackwardReleasedButtonMessage()));
+//    connect(ui->leftButton,  SIGNAL(released()), this,   SLOT(sendLeftReleasedButtonMessage()));
+//    connect(ui->rightButton, SIGNAL(released()), this,   SLOT(sendRightReleasedButtonMessage()));
+//    connect(ui->forwardrightButton,  SIGNAL(pressed()),  this, SLOT(sendForwardRightPressButtonMessage()));
+//    connect(ui->forwardrightButton,  SIGNAL(released()), this, SLOT(sendForwardRightReleasedButtonMessage()));
+//    connect(ui->forwardleftButton,   SIGNAL(pressed()),  this, SLOT(sendForwardLeftPressButtonMessage()));
+//    connect(ui->forwardleftButton,   SIGNAL(released()), this, SLOT(sendForwardLeftReleasedButtonMessage()));
+//    connect(ui->backwardrightButton, SIGNAL(pressed()),  this, SLOT(sendBackwardRightPressButtonMessage()));
+//    connect(ui->backwardrightButton, SIGNAL(released()), this, SLOT(sendBackwardRightReleasedButtonMessage()));
+//    connect(ui->backwardleftButton,  SIGNAL(pressed()),  this, SLOT(sendBackwardLeftPressButtonMessage()));
+//    connect(ui->backwardleftButton,  SIGNAL(released()), this, SLOT(sendBackwardLeftReleasedButtonMessage()));
+    connect(this,&RobotControlDlg::sendMessage,client,&BtClient::sendMessage);
+    connect(ui->forwardButton, &QPushButton::pressed, this,  &RobotControlDlg::sendForwardPressButtonMessage);
+    connect(ui->backwardButton, &QPushButton::pressed, this, &RobotControlDlg::sendBackwardPressButtonMessage);
+    connect(ui->leftButton, &QPushButton::pressed, this,     &RobotControlDlg::sendLeftPressButtonMessage);
+    connect(ui->rightButton, &QPushButton::pressed, this,    &RobotControlDlg::sendRightPressButtonMessage);
+    connect(ui->forwardButton, &QPushButton::released, this,  &RobotControlDlg::sendForwardReleasedButtonMessage);
+    connect(ui->backwardButton, &QPushButton::released, this, &RobotControlDlg::sendBackwardReleasedButtonMessage);
+    connect(ui->leftButton, &QPushButton::released, this,     &RobotControlDlg::sendLeftReleasedButtonMessage);
+    connect(ui->rightButton, &QPushButton::released, this,    &RobotControlDlg::sendRightReleasedButtonMessage);
+    connect(ui->forwardrightButton, &QPushButton::pressed,   this, &RobotControlDlg::sendForwardRightPressButtonMessage);
+    connect(ui->forwardrightButton, &QPushButton::released,  this, &RobotControlDlg::sendForwardRightReleasedButtonMessage);
+    connect(ui->forwardleftButton,   &QPushButton::pressed, this,  &RobotControlDlg::sendForwardLeftPressButtonMessage);
+    connect(ui->forwardleftButton,   &QPushButton::released, this, &RobotControlDlg::sendForwardLeftReleasedButtonMessage);
+    connect(ui->backwardrightButton, &QPushButton::pressed, this,  &RobotControlDlg::sendBackwardRightPressButtonMessage);
+    connect(ui->backwardrightButton, &QPushButton::released ,this, &RobotControlDlg::sendBackwardRightReleasedButtonMessage);
+    connect(ui->backwardleftButton,  &QPushButton::pressed, this,  &RobotControlDlg::sendBackwardLeftPressButtonMessage);
+    connect(ui->backwardleftButton,  &QPushButton::released, this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
 }
 
 void RobotControlDlg::clientFail()
 {
     QString title = QString("%1 ошибка соединения с %2").arg(Title).arg(deviceName);
     setWindowTitle(title);
-    disconnect();
+    disconnect(false);
 }
 
-void RobotControlDlg::disconnect()
+void RobotControlDlg::disconnect(bool state)
 {
-    QObject::disconnect(this,SIGNAL(sendMessage),client,SLOT(sendMessage(char)));
-    QObject::disconnect(ui->forwardButton, SIGNAL(pressed()), this,  SLOT(sendForwardPressButtonMessage()));
-    QObject::disconnect(ui->backwardButton, SIGNAL(pressed()), this, SLOT(sendBackwardPressButtonMessage()));
-    QObject::disconnect(ui->leftButton, SIGNAL(pressed()), this,     SLOT(sendLeftPressButtonMessage()));
-    QObject::disconnect(ui->rightButton, SIGNAL(pressed()), this,    SLOT(sendRightPressButtonMessage()));
-    QObject::disconnect(ui->forwardButton, SIGNAL(released()), this, SLOT(sendForwardReleasedButtonMessage()));
-    QObject::disconnect(ui->backwardButton,SIGNAL(released()), this, SLOT(sendBackwardReleasedButtonMessage()));
-    QObject::disconnect(ui->leftButton,  SIGNAL(released()), this,   SLOT(sendLeftReleasedButtonMessage()));
-    QObject::disconnect(ui->rightButton, SIGNAL(released()), this,   SLOT(sendRightReleasedButtonMessage()));
-    QObject::disconnect(ui->forwardrightButton,  SIGNAL(pressed()),  this, SLOT(sendForwardRightPressButtonMessage()));
-    QObject::disconnect(ui->forwardrightButton,  SIGNAL(released()), this, SLOT(sendForwardRightReleasedButtonMessage()));
-    QObject::disconnect(ui->forwardleftButton,   SIGNAL(pressed()),  this, SLOT(sendForwardLeftPressButtonMessage()));
-    QObject::disconnect(ui->forwardleftButton,   SIGNAL(released()), this, SLOT(sendForwardLeftReleasedButtonMessage()));
-    QObject::disconnect(ui->backwardrightButton, SIGNAL(pressed()),  this, SLOT(sendBackwardRightPressButtonMessage()));
-    QObject::disconnect(ui->backwardrightButton, SIGNAL(released()), this, SLOT(sendBackwardRightReleasedButtonMessage()));
-    QObject::disconnect(ui->backwardleftButton,  SIGNAL(pressed()),  this, SLOT(sendBackwardLeftPressButtonMessage()));
-    QObject::disconnect(ui->backwardleftButton,  SIGNAL(released()), this, SLOT(sendBackwardLeftReleasedButtonMessage()));
-//    QObject::disconnect(this,&RobotControlDlg::sendMessage,client,&BtClient::sendMessage);
-//    QObject::disconnect(ui->forwardButton, &QPushButton::pressed, this,  &RobotControlDlg::sendForwardPressButtonMessage);
-//    QObject::disconnect(ui->backwardButton, &QPushButton::pressed, this, &RobotControlDlg::sendBackwardPressButtonMessage);
-//    QObject::disconnect(ui->leftButton, &QPushButton::pressed, this,     &RobotControlDlg::sendLeftPressButtonMessage);
-//    QObject::disconnect(ui->rightButton, &QPushButton::pressed, this,    &RobotControlDlg::sendRightPressButtonMessage);
-//    QObject::disconnect(ui->forwardButton, &QPushButton::released, this,  &RobotControlDlg::sendForwardReleasedButtonMessage);
-//    QObject::disconnect(ui->backwardButton, &QPushButton::released, this, &RobotControlDlg::sendBackwardReleasedButtonMessage);
-//    QObject::disconnect(ui->leftButton, &QPushButton::released, this,     &RobotControlDlg::sendLeftReleasedButtonMessage);
-//    QObject::disconnect(ui->rightButton, &QPushButton::released, this,    &RobotControlDlg::sendRightReleasedButtonMessage);
-//    QObject::disconnect(ui->forwardrightButton, &QPushButton::pressed,this, &RobotControlDlg::sendForwardRightPressButtonMessage);
-//    QObject::disconnect(ui->forwardrightButton, &QPushButton::released,this, &RobotControlDlg::sendForwardRightReleasedButtonMessage);
-//    QObject::disconnect(ui->forwardleftButton, &QPushButton::pressed,this,  &RobotControlDlg::sendForwardLeftPressButtonMessage);
-//    QObject::disconnect(ui->forwardleftButton, &QPushButton::released,this,  &RobotControlDlg::sendForwardLeftReleasedButtonMessage);
-//    QObject::disconnect(ui->backwardrightButton, &QPushButton::pressed,this,&RobotControlDlg::sendBackwardRightPressButtonMessage);
-//    QObject::disconnect(ui->backwardrightButton, &QPushButton::released,this,&RobotControlDlg::sendBackwardRightReleasedButtonMessage);
-//    QObject::disconnect(ui->backwardleftButton, &QPushButton::pressed,this, &RobotControlDlg::sendBackwardLeftPressButtonMessage);
-//    QObject::disconnect(ui->backwardleftButton, &QPushButton::released,this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
+//    QObject::disconnect(this,SIGNAL(sendMessage),client,SLOT(sendMessage(char)));
+//    QObject::disconnect(ui->forwardButton, SIGNAL(pressed()), this,  SLOT(sendForwardPressButtonMessage()));
+//    QObject::disconnect(ui->backwardButton, SIGNAL(pressed()), this, SLOT(sendBackwardPressButtonMessage()));
+//    QObject::disconnect(ui->leftButton, SIGNAL(pressed()), this,     SLOT(sendLeftPressButtonMessage()));
+//    QObject::disconnect(ui->rightButton, SIGNAL(pressed()), this,    SLOT(sendRightPressButtonMessage()));
+//    QObject::disconnect(ui->forwardButton, SIGNAL(released()), this, SLOT(sendForwardReleasedButtonMessage()));
+//    QObject::disconnect(ui->backwardButton,SIGNAL(released()), this, SLOT(sendBackwardReleasedButtonMessage()));
+//    QObject::disconnect(ui->leftButton,  SIGNAL(released()), this,   SLOT(sendLeftReleasedButtonMessage()));
+//    QObject::disconnect(ui->rightButton, SIGNAL(released()), this,   SLOT(sendRightReleasedButtonMessage()));
+//    QObject::disconnect(ui->forwardrightButton,  SIGNAL(pressed()),  this, SLOT(sendForwardRightPressButtonMessage()));
+//    QObject::disconnect(ui->forwardrightButton,  SIGNAL(released()), this, SLOT(sendForwardRightReleasedButtonMessage()));
+//    QObject::disconnect(ui->forwardleftButton,   SIGNAL(pressed()),  this, SLOT(sendForwardLeftPressButtonMessage()));
+//    QObject::disconnect(ui->forwardleftButton,   SIGNAL(released()), this, SLOT(sendForwardLeftReleasedButtonMessage()));
+//    QObject::disconnect(ui->backwardrightButton, SIGNAL(pressed()),  this, SLOT(sendBackwardRightPressButtonMessage()));
+//    QObject::disconnect(ui->backwardrightButton, SIGNAL(released()), this, SLOT(sendBackwardRightReleasedButtonMessage()));
+//    QObject::disconnect(ui->backwardleftButton,  SIGNAL(pressed()),  this, SLOT(sendBackwardLeftPressButtonMessage()));
+//    QObject::disconnect(ui->backwardleftButton,  SIGNAL(released()), this, SLOT(sendBackwardLeftReleasedButtonMessage()));
+    QObject::disconnect(this,&RobotControlDlg::sendMessage,client,&BtClient::sendMessage);
+    QObject::disconnect(ui->forwardButton, &QPushButton::pressed, this,  &RobotControlDlg::sendForwardPressButtonMessage);
+    QObject::disconnect(ui->backwardButton, &QPushButton::pressed, this, &RobotControlDlg::sendBackwardPressButtonMessage);
+    QObject::disconnect(ui->leftButton, &QPushButton::pressed, this,     &RobotControlDlg::sendLeftPressButtonMessage);
+    QObject::disconnect(ui->rightButton, &QPushButton::pressed, this,    &RobotControlDlg::sendRightPressButtonMessage);
+    QObject::disconnect(ui->forwardButton, &QPushButton::released, this,  &RobotControlDlg::sendForwardReleasedButtonMessage);
+    QObject::disconnect(ui->backwardButton, &QPushButton::released, this, &RobotControlDlg::sendBackwardReleasedButtonMessage);
+    QObject::disconnect(ui->leftButton, &QPushButton::released, this,     &RobotControlDlg::sendLeftReleasedButtonMessage);
+    QObject::disconnect(ui->rightButton, &QPushButton::released, this,    &RobotControlDlg::sendRightReleasedButtonMessage);
+    QObject::disconnect(ui->forwardrightButton, &QPushButton::pressed,this, &RobotControlDlg::sendForwardRightPressButtonMessage);
+    QObject::disconnect(ui->forwardrightButton, &QPushButton::released,this, &RobotControlDlg::sendForwardRightReleasedButtonMessage);
+    QObject::disconnect(ui->forwardleftButton, &QPushButton::pressed,this,  &RobotControlDlg::sendForwardLeftPressButtonMessage);
+    QObject::disconnect(ui->forwardleftButton, &QPushButton::released,this,  &RobotControlDlg::sendForwardLeftReleasedButtonMessage);
+    QObject::disconnect(ui->backwardrightButton, &QPushButton::pressed,this,&RobotControlDlg::sendBackwardRightPressButtonMessage);
+    QObject::disconnect(ui->backwardrightButton, &QPushButton::released,this,&RobotControlDlg::sendBackwardRightReleasedButtonMessage);
+    QObject::disconnect(ui->backwardleftButton, &QPushButton::pressed,this, &RobotControlDlg::sendBackwardLeftPressButtonMessage);
+    QObject::disconnect(ui->backwardleftButton, &QPushButton::released,this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
+    setWindowTitle(Title);
+    if(!state)
+    {
+        QMessageBox::StandardButton n = QMessageBox::critical(this,"Critical error","Memory error! Continue?",QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        if(n == QMessageBox::No)
+        {
+            ui->quit->setDown(true);
+            ui->quit->pressed();
+        }
+    }
+}
+
+void RobotControlDlg::logWrite(QString text)
+{
+    qDebug() << text;
 }
 
 void RobotControlDlg::on_discoverable_clicked(bool clicked)

@@ -4,6 +4,7 @@
 #
 #-------------------------------------------------
 
+#QT       = widgets
 QT       = core bluetooth widgets
 
 requires(qtConfig(listwidget))

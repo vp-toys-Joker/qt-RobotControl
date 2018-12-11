@@ -84,13 +84,16 @@ signals:
     void messageReceived(const QString &sender, const QString &message);
     void devConnected(const QString &name);
     void failConnected();
-    void disconnected();
+    void disconnected(bool state);
+//    void sendSocketError(QString errString);
+    void sendSocketState(QString stateString);
 
 private slots:
     void readSocket();
     void connectedSocket();
     void errorSocket(QBluetoothSocket::SocketError error);
     void stateSocket(QBluetoothSocket::SocketState state);
+    void disConnected();
 
 private:
     QBluetoothSocket *socket;

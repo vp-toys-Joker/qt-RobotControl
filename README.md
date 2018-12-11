@@ -1,5 +1,7 @@
 # qt-RobotControl
 qt project for arduino robot (https://github.com/vp-toys-Joker/arduino-robotbtcontrol)
+QT 5.12.0
+OC: Windows10, Ubuntu 18
 Управление 4-х колесным arduino роботом по bluetooth каналу.
 Статус: в разработке
 Для управления роботом используются следующие клавиши клавиатуры:
@@ -26,3 +28,5 @@ qt project for arduino robot (https://github.com/vp-toys-Joker/arduino-robotbtco
     'I' - движение вперед и вправо
     'H' - движение назад и влево
     'J' - движение назад и вправо
+	'D' - завершение работы управляющей программы
+
