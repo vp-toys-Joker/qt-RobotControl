@@ -1,0 +1,9 @@
+/btclient.o
+/main.o
+/moc_RobotControl.cpp
+/moc_RobotControl.o
+/moc_btclient.cpp
+/moc_btclient.o
+/moc_predefs.h
+/RobotControl.exe
+/RobotControl.o

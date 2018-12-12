@@ -1,0 +1,15 @@
+/btclient.obj
+/chatclient.obj
+/main.obj
+/moc_RobotControl.cpp
+/moc_RobotControl.obj
+/moc_btclient.cpp
+/moc_btclient.obj
+/moc_chatclient.cpp
+/moc_chatclient.obj
+/moc_predefs.h
+/RobotControl.exe
+/RobotControl.ilk
+/RobotControl.obj
+/RobotControl.pdb
+*.vc.pdb

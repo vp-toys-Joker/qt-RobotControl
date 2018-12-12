@@ -103,8 +103,9 @@ void BtClient::stopClient()
 {
     if (socket != nullptr)
     {
-        if(socket->error() == QBluetoothSocket::NoSocketError
+        if((socket->error() == QBluetoothSocket::NoSocketError
         || socket->error() == QBluetoothSocket::OperationError)
+        && socket->state() == QBluetoothSocket::ConnectedState)
         {
             sendMessage(cmdDisconnect);
         }

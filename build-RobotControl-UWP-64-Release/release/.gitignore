@@ -1,0 +1,17 @@
+/AppxManifest.xml
+/chatclient.obj
+/libEGL.dll
+/libGLESV2.dll
+/main.obj
+/Qt5Bluetooth.dll
+/Qt5Core.dll
+/Qt5Gui.dll
+/Qt5Svg.dll
+/Qt5Widgets.dll
+/moc_RobotControl.cpp
+/moc_RobotControl.obj
+/moc_chatclient.cpp
+/moc_chatclient.obj
+/moc_predefs.h
+/RobotControl.exe
+/RobotControl.obj
