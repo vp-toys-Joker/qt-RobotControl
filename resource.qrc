@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="">
+        <file alias = "forward-img.png">res/forward.png</file>
+        <file alias = "back-img.png">res/back.png</file>
+        <file alias = "toleft-img.png">res/toleft.png</file>
+        <file alias = "toright-img.png">res/toright.png</file>
+        <file alias = "forwardleft-img.png">res/forwardleft.png</file>
+        <file alias = "backleft-img.png">res/backleft.png</file>
+        <file alias = "forwardright-img.png">res/forwardright.png</file>
+        <file alias = "backright-img.png">res/backright.png</file>
+    </qresource>
+</RCC>

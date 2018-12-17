@@ -196,6 +196,7 @@ void RobotControlDlg::clientReady(const QString peerName)
     connect(ui->backwardrightButton, &QPushButton::released ,this, &RobotControlDlg::sendBackwardRightReleasedButtonMessage);
     connect(ui->backwardleftButton,  &QPushButton::pressed, this,  &RobotControlDlg::sendBackwardLeftPressButtonMessage);
     connect(ui->backwardleftButton,  &QPushButton::released, this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
+    connect(ui->speedControl,  &QSlider::sliderMoved, this, &RobotControlDlg::sendSpeedMessage);
 }
 
 void RobotControlDlg::clientFail()
@@ -241,6 +242,7 @@ void RobotControlDlg::disconnect(bool state)
     QObject::disconnect(ui->backwardrightButton, &QPushButton::released,this,&RobotControlDlg::sendBackwardRightReleasedButtonMessage);
     QObject::disconnect(ui->backwardleftButton, &QPushButton::pressed,this, &RobotControlDlg::sendBackwardLeftPressButtonMessage);
     QObject::disconnect(ui->backwardleftButton, &QPushButton::released,this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
+    QObject::disconnect(ui->speedControl,  &QSlider::sliderMoved, this, &RobotControlDlg::sendSpeedMessage);
     setWindowTitle(Title);
     if(!state)
     {
@@ -568,6 +570,46 @@ void RobotControlDlg::sendBackwardLeftReleasedButtonMessage()
     setAlterButtonsEnable(true);
 }
 
+void RobotControlDlg::sendSpeedMessage(int val)
+{
+    switch(val)
+    {
+        case 0:
+            emit sendMessage(cmdSpeed0);
+        break;
+        case 1:
+            emit sendMessage(cmdSpeed1);
+        break;
+        case 2:
+            emit sendMessage(cmdSpeed2);
+        break;
+        case 3:
+            emit sendMessage(cmdSpeed3);
+        break;
+        case 4:
+            emit sendMessage(cmdSpeed4);
+        break;
+        case 5:
+            emit sendMessage(cmdSpeed5);
+        break;
+        case 6:
+            emit sendMessage(cmdSpeed6);
+        break;
+        case 7:
+            emit sendMessage(cmdSpeed7);
+        break;
+        case 8:
+            emit sendMessage(cmdSpeed8);
+        break;
+        case 9:
+            emit sendMessage(cmdSpeed9);
+        break;
+        case 10:
+            emit sendMessage(cmdSpeed10);
+        break;
+    }
+}
+
 void RobotControlDlg::keyPressEvent(QKeyEvent *pe)
 {
     bool AutoRepeat = pe->isAutoRepeat();
@@ -636,6 +678,26 @@ void RobotControlDlg::keyPressEvent(QKeyEvent *pe)
             ui->backwardleftButton->setDown(true);
             ui->backwardleftButton->pressed();
         }
+        break;
+        case Qt::Key_Plus:
+        {
+            int pos = ui->speedControl->sliderPosition();
+            if(++pos < ui->speedControl->maximum())
+            {
+                ui->speedControl->setSliderPosition(pos);
+//            ui->speedControl->triggerAction(QAbstractSlider::SliderSingleStepAdd);
+            }
+        }
+        break;
+        case Qt::Key_Minus:
+    {
+        int pos = ui->speedControl->sliderPosition();
+        if(--pos > ui->speedControl->minimum())
+        {
+            ui->speedControl->setSliderPosition(pos);
+//        ui->speedControl->triggerAction(QAbstractSlider::SliderSingleStepSub);
+        }
+    }
         break;
         default: QDialog::keyPressEvent(pe);
     }

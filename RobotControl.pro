@@ -36,3 +36,4 @@ HEADERS += \
 
 FORMS += \
     robotcontrol.ui
+RESOURCES       = resource.qrc

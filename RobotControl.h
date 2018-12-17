@@ -54,6 +54,7 @@ public slots:
     void sendBackwardRightReleasedButtonMessage();
     void sendForwardLeftReleasedButtonMessage();
     void sendBackwardLeftReleasedButtonMessage();
+    void sendSpeedMessage(int val);
     void clientReady(const QString peerName);
     void clientFail();
     void disconnect(bool state);
