@@ -3,7 +3,7 @@
 
 #include "declaration.h"
 
-#include "ui_robotcontrol.h"
+#include <ui_RobotControl.h>
 #include <qbluetoothlocaldevice.h>
 
 #include <QDialog>
