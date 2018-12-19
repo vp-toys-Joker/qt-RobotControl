@@ -456,7 +456,7 @@ void RobotControlDlg::sendBackwardLeftPressButtonMessage()
         ui->forwardleftButton->setEnabled(false);
         ui->forwardrightButton->setEnabled(false);
         ui->backwardrightButton->setEnabled(false);
-        emit sendMessage(cmdRightBackward);
+        emit sendMessage(cmdLeftBackward);
     }
 }
 
