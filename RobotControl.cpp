@@ -197,6 +197,7 @@ void RobotControlDlg::clientReady(const QString peerName)
     connect(ui->backwardleftButton,  &QPushButton::pressed, this,  &RobotControlDlg::sendBackwardLeftPressButtonMessage);
     connect(ui->backwardleftButton,  &QPushButton::released, this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
     connect(ui->speedControl,  &QSlider::sliderMoved, this, &RobotControlDlg::sendSpeedMessage);
+    connect(ui->speedControl,  &QSlider::valueChanged, this, &RobotControlDlg::sendSpeedMessage);
 }
 
 void RobotControlDlg::clientFail()
@@ -243,6 +244,7 @@ void RobotControlDlg::disconnect(bool state)
     QObject::disconnect(ui->backwardleftButton, &QPushButton::pressed,this, &RobotControlDlg::sendBackwardLeftPressButtonMessage);
     QObject::disconnect(ui->backwardleftButton, &QPushButton::released,this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
     QObject::disconnect(ui->speedControl,  &QSlider::sliderMoved, this, &RobotControlDlg::sendSpeedMessage);
+    QObject::disconnect(ui->speedControl,  &QSlider::valueChanged, this, &RobotControlDlg::sendSpeedMessage);
     setWindowTitle(Title);
     if(!state)
     {
@@ -680,24 +682,10 @@ void RobotControlDlg::keyPressEvent(QKeyEvent *pe)
         }
         break;
         case Qt::Key_Plus:
-        {
-            int pos = ui->speedControl->sliderPosition();
-            if(++pos < ui->speedControl->maximum())
-            {
-                ui->speedControl->setSliderPosition(pos);
-//            ui->speedControl->triggerAction(QAbstractSlider::SliderSingleStepAdd);
-            }
-        }
+            ui->speedControl->triggerAction(QAbstractSlider::SliderSingleStepAdd);
         break;
         case Qt::Key_Minus:
-    {
-        int pos = ui->speedControl->sliderPosition();
-        if(--pos > ui->speedControl->minimum())
-        {
-            ui->speedControl->setSliderPosition(pos);
-//        ui->speedControl->triggerAction(QAbstractSlider::SliderSingleStepSub);
-        }
-    }
+            ui->speedControl->triggerAction(QAbstractSlider::SliderSingleStepSub);
         break;
         default: QDialog::keyPressEvent(pe);
     }
