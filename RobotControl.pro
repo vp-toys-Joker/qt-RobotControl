@@ -35,5 +35,5 @@ HEADERS += \
     declaration.h
 
 FORMS += \
-    robotcontrol.ui
+    RobotControl.ui
 RESOURCES       = resource.qrc
