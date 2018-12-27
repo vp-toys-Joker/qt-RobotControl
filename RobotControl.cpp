@@ -83,21 +83,21 @@ bool RobotControlDlg::eventFilter(QObject *target, QEvent *event)
         || keyEvent->key() == Qt::Key_Plus
         || keyEvent->key() == Qt::Key_Minus)
         {
-          if(connectedMode)
-          {
-              res = true;
-              if (event->type() == QEvent::KeyPress)
-              {
-                  keyPressEvent(keyEvent);
-              }
-              else /*if(event->type() == QEvent::KeyRelease) */
-              {
-                  keyReleaseEvent(keyEvent);
-              }
-          }
-          else if(target == ui->speedControl
+            res = true;
+            if(connectedMode)
+            {
+                if (event->type() == QEvent::KeyPress)
+                {
+                    keyPressEvent(keyEvent);
+                }
+                else /*if(event->type() == QEvent::KeyRelease) */
+                {
+                    keyReleaseEvent(keyEvent);
+                }
+            }
+            else if(target == ui->speedControl
                || keyEvent->key() == Qt::Key_Up
-               || keyEvent->key() == Qt::Key_Down) res = true;
+               || keyEvent->key() == Qt::Key_Down) res = false;
         }
     }
     return res;
