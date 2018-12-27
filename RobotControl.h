@@ -59,6 +59,7 @@ public slots:
     void clientFail();
     void disconnect(bool state);
     void logWrite(QString text);
+    bool eventFilter(QObject *target, QEvent *event) override;
 private slots:
     void startScan();
     void scanFinished();
@@ -84,6 +85,7 @@ private:
     bool pagednPressed;
     bool homePressed;
     bool endPressed;
+    bool connectedMode;
     inline void setBaseButtonsEnable(bool state)
     {
         ui->forwardButton->setEnabled(state);

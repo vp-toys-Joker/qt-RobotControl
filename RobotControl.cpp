@@ -30,9 +30,12 @@ RobotControlDlg::RobotControlDlg(QWidget *parent) :
     , pagednPressed(false)
     , homePressed(false)
     , endPressed(false)
+    , connectedMode(false)
 {
     ui->setupUi(this);
     Title = windowTitle();
+    ui->speedControl->installEventFilter(this);
+    ui->list->installEventFilter(this);
 
     client = new BtClient(this);
 
@@ -67,6 +70,32 @@ RobotControlDlg::RobotControlDlg(QWidget *parent) :
     connect(ui->list, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(displayPairingMenu(QPoint)));
     connect(localDevice, SIGNAL(pairingFinished(QBluetoothAddress,QBluetoothLocalDevice::Pairing))
         , this, SLOT(pairingDone(QBluetoothAddress,QBluetoothLocalDevice::Pairing)));
+}
+
+bool RobotControlDlg::eventFilter(QObject *target, QEvent *event)
+{
+    bool res = false;
+    if(target == ui->list || target == ui->speedControl)
+    {
+        QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down)
+        {
+          if(connectedMode)
+          {
+              res = true;
+              if (event->type() == QEvent::KeyPress)
+              {
+                  keyPressEvent(keyEvent);
+              }
+              else /*if(event->type() == QEvent::KeyRelease) */
+              {
+                  keyReleaseEvent(keyEvent);
+              }
+          }
+          else if(target == ui->speedControl) res = true;
+        }
+    }
+    return res;
 }
 
 RobotControlDlg::~RobotControlDlg()
