@@ -35,6 +35,7 @@ RobotControlDlg::RobotControlDlg(QWidget *parent) :
     ui->setupUi(this);
     Title = windowTitle();
     ui->speedControl->installEventFilter(this);
+    ui->speedControl->setEnabled(false);
     ui->list->installEventFilter(this);
 
     client = new BtClient(this);
@@ -242,6 +243,7 @@ void RobotControlDlg::clientReady(const QString peerName)
     connect(ui->speedControl,  &QSlider::sliderMoved, this, &RobotControlDlg::sendSpeedMessage);
     connect(ui->speedControl,  &QSlider::valueChanged, this, &RobotControlDlg::sendSpeedMessage);
     connectedMode = true;
+    ui->speedControl->setEnabled(true);
 }
 
 void RobotControlDlg::clientFail()
@@ -270,6 +272,8 @@ void RobotControlDlg::disconnect(bool state)
 //    QObject::disconnect(ui->backwardrightButton, SIGNAL(released()), this, SLOT(sendBackwardRightReleasedButtonMessage()));
 //    QObject::disconnect(ui->backwardleftButton,  SIGNAL(pressed()),  this, SLOT(sendBackwardLeftPressButtonMessage()));
 //    QObject::disconnect(ui->backwardleftButton,  SIGNAL(released()), this, SLOT(sendBackwardLeftReleasedButtonMessage()));
+    ui->speedControl->setSliderPosition(0);
+    ui->speedControl->setEnabled(false);
     connectedMode = false;
     QObject::disconnect(this,&RobotControlDlg::sendMessage,client,&BtClient::sendMessage);
     QObject::disconnect(ui->forwardButton, &QPushButton::pressed, this,  &RobotControlDlg::sendForwardPressButtonMessage);
