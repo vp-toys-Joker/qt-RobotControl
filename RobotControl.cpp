@@ -78,10 +78,15 @@ bool RobotControlDlg::eventFilter(QObject *target, QEvent *event)
     if(target == ui->list || target == ui->speedControl)
     {
         QKeyEvent *keyEvent = dynamic_cast<QKeyEvent*>(event);
-        if (keyEvent->key() == Qt::Key_Up
+        if (keyEvent
+        && (keyEvent->key() == Qt::Key_Up
         || keyEvent->key() == Qt::Key_Down
         || keyEvent->key() == Qt::Key_Plus
-        || keyEvent->key() == Qt::Key_Minus)
+        || keyEvent->key() == Qt::Key_Minus
+        || keyEvent->key() == Qt::Key_Home
+        || keyEvent->key() == Qt::Key_End
+        || keyEvent->key() == Qt::Key_PageUp
+        || keyEvent->key() == Qt::Key_PageDown))
         {
             res = true;
             if(connectedMode)
@@ -96,8 +101,12 @@ bool RobotControlDlg::eventFilter(QObject *target, QEvent *event)
                 }
             }
             else if(target == ui->speedControl
-               || keyEvent->key() == Qt::Key_Up
-               || keyEvent->key() == Qt::Key_Down) res = false;
+                 || keyEvent->key() == Qt::Key_Home
+                 || keyEvent->key() == Qt::Key_End
+                 || keyEvent->key() == Qt::Key_PageUp
+                 || keyEvent->key() == Qt::Key_PageDown
+                 || keyEvent->key() == Qt::Key_Up
+                 || keyEvent->key() == Qt::Key_Down) res = false;
         }
     }
     return res;
@@ -232,6 +241,7 @@ void RobotControlDlg::clientReady(const QString peerName)
     connect(ui->backwardleftButton,  &QPushButton::released, this, &RobotControlDlg::sendBackwardLeftReleasedButtonMessage);
     connect(ui->speedControl,  &QSlider::sliderMoved, this, &RobotControlDlg::sendSpeedMessage);
     connect(ui->speedControl,  &QSlider::valueChanged, this, &RobotControlDlg::sendSpeedMessage);
+    connectedMode = true;
 }
 
 void RobotControlDlg::clientFail()
@@ -260,6 +270,7 @@ void RobotControlDlg::disconnect(bool state)
 //    QObject::disconnect(ui->backwardrightButton, SIGNAL(released()), this, SLOT(sendBackwardRightReleasedButtonMessage()));
 //    QObject::disconnect(ui->backwardleftButton,  SIGNAL(pressed()),  this, SLOT(sendBackwardLeftPressButtonMessage()));
 //    QObject::disconnect(ui->backwardleftButton,  SIGNAL(released()), this, SLOT(sendBackwardLeftReleasedButtonMessage()));
+    connectedMode = false;
     QObject::disconnect(this,&RobotControlDlg::sendMessage,client,&BtClient::sendMessage);
     QObject::disconnect(ui->forwardButton, &QPushButton::pressed, this,  &RobotControlDlg::sendForwardPressButtonMessage);
     QObject::disconnect(ui->backwardButton, &QPushButton::pressed, this, &RobotControlDlg::sendBackwardPressButtonMessage);
