@@ -361,28 +361,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>121</x>
-     <y>451</y>
+     <x>327</x>
+     <y>453</y>
     </hint>
     <hint type="destinationlabel">
      <x>121</x>
      <y>309</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>quit</sender>
-   <signal>pressed()</signal>
-   <receiver>RobotControl</receiver>
-   <slot>exec()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>213</x>
-     <y>458</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>36</x>
-     <y>699</y>
     </hint>
    </hints>
   </connection>

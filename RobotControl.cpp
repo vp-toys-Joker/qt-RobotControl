@@ -51,7 +51,9 @@ RobotControlDlg::RobotControlDlg(QWidget *parent) :
 
     discoveryAgent = new QBluetoothDeviceDiscoveryAgent();
 
-    connect(ui->quit, SIGNAL(clicked()), this, SLOT(accept()));
+//    connect(ui->quit, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(ui->quit, SIGNAL(clicked()), this, SLOT(stopDevice()));
+    connect(this, SIGNAL(stopApp()), this, SLOT(accept()));
     connect(ui->inquiryType, SIGNAL(toggled(bool)), this, SLOT(setGeneralUnlimited(bool)));
     connect(ui->scan, SIGNAL(clicked()), this, SLOT(startScan()));
 
@@ -304,6 +306,13 @@ void RobotControlDlg::disconnect(bool state)
             ui->quit->pressed();
         }
     }
+}
+
+void RobotControlDlg::stopDevice()
+{
+    if(connectedMode)
+        emit sendMessage(cmdDisconnect);
+    emit stopApp();
 }
 
 void RobotControlDlg::logWrite(QString text)

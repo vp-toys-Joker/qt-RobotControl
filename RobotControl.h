@@ -32,6 +32,7 @@ public:
     ~RobotControlDlg() override;
 signals:
     void sendMessage(const char&);
+    void stopApp();
 public slots:
     void addDevice(const QBluetoothDeviceInfo&);
     void on_power_clicked(bool clicked);
@@ -66,6 +67,7 @@ private slots:
     void setGeneralUnlimited(bool unlimited);
     void itemActivated(QListWidgetItem *item);
     void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
+    void stopDevice();
 
 
 private:

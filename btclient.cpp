@@ -108,7 +108,7 @@ void BtClient::stopClient()
         && socket->state() == QBluetoothSocket::ConnectedState)
         {
             sendMessage(cmdDisconnect);
-            for(int i = 0; i < 100; ++i){}
+            //for(int i = 0; i < 100; ++i){}
         }
         delete socket;
         socket = nullptr;
