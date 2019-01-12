@@ -1,5 +1,6 @@
 #include "declaration.h"
 
+#include <QTimer>
 #include <QMessageBox>
 #include <QKeyEvent>
 #include "RobotControl.h"
@@ -311,8 +312,11 @@ void RobotControlDlg::disconnect(bool state)
 void RobotControlDlg::stopDevice()
 {
     if(connectedMode)
+    {
         emit sendMessage(cmdDisconnect);
-    emit stopApp();
+        QTimer::singleShot(5*1000,this,SLOT(accept()));
+    }
+    else emit stopApp();
 }
 
 void RobotControlDlg::logWrite(QString text)
