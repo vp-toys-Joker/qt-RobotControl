@@ -1,4 +1,4 @@
-# qt-RobotControl
+# qt-RobotControl - v0.001b
 qt project for arduino robot (https://github.com/vp-toys-Joker/arduino-robotbtcontrol)
 QT 5.12.0
 OC: Windows10, Ubuntu 18
